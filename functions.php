@@ -29,7 +29,7 @@
 		echo "user with id ".$id." logged in!";
 		
 		//create session variables
-		//
+	
 		$_SESSION["user_id"] = $id;
 		$_SESSION["username"] = $user;
 		
