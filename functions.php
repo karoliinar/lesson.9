@@ -9,39 +9,39 @@
 
 	function login($user, $pass){
 	
-	//hash the password
-		$pass = hash("sha512", $pass);
+		//hash the password
+			$pass = hash("sha512", $pass);
 	
-	$mysql = new mysqli("localhost", $GLOBALS["db_username"], $GLOBALS["db_password"], "webpr2016_karoliinar");
+		$mysql = new mysqli("localhost", $GLOBALS["db_username"], $GLOBALS["db_password"], "webpr2016_karoliinar");
 	
-	$stmt = $mysql->prepare("SELECT id, name, name2 FROM users where username=? and password=?");
+		$stmt = $mysql->prepare("SELECT id, name, name2 FROM users where username=? and password=?");
 	
-	echo $mysql->error; 
+		echo $mysql->error; 
 	
-	$stmt->bind_param("ss", $user, $pass);
+		$stmt->bind_param("ss", $user, $pass);
 	
-	$stmt->bind_result($id, $name, $name2);
+		$stmt->bind_result($id, $name, $name2);
 	
-	$stmt->execute();
+		$stmt->execute();
 	
-	//get the data
-	if($stmt->fetch()){
-		echo "user with id ".$id." logged in!";
+		//get the data
+		if($stmt->fetch()){
+			echo "user with id ".$id." logged in!";
 		
-		//create session variables
+			//create session variables
 	
-		$_SESSION["user_id"] = $id;
-		$_SESSION["name"] = $name;
-		$_SESSION["username"] = $user;
+			$_SESSION["user_id"] = $id;
+			$_SESSION["name"] = $name;
+			$_SESSION["username"] = $user;
 		
-		header("Location: restrict.php");
+			header("Location: restrict.php");
 		
-	}else{
-		echo $stmt->error; 
-		echo "wrong credentials";
+		}else{
+			echo $stmt->error; 
+			echo "wrong credentials";
 		
+			}
 		}
-	}
 
 	function signup($user, $pass, $name, $name2){
 		
@@ -114,54 +114,54 @@
 	
 	function saveuserInterest($interest_id){
 	
-	$mysql = new mysqli("localhost", $GLOBALS["db_username"], $GLOBALS["db_password"], "webpr2016_karoliinar");
+		$mysql = new mysqli("localhost", $GLOBALS["db_username"], $GLOBALS["db_password"], "webpr2016_karoliinar");
 	
-	//if user already has the interest
-	$stmt = $mysql->prepare("SELECT id FROM users_interests WHERE user_id = ? and interests_id = ?");
-	echo $mysql->error;
-	$stmt->bind_param("ii", $_SESSION["user_id"], $interest_id);
-	$stmt->execute();
+		//if user already has the interest
+		$stmt = $mysql->prepare("SELECT id FROM users_interests WHERE user_id = ? and interests_id = ?");
+		echo $mysql->error;
+		$stmt->bind_param("ii", $_SESSION["user_id"], $interest_id);
+		$stmt->execute();
 	
-	if($stmt->fetch()){
-		//if existed
-		echo "you already have this interest";
-		return; //stop it there
+		if($stmt->fetch()){
+			//if existed
+			echo "you already have this interest";
+			return; //stop it there
 		
-	}
-	$stmt->close();
+		}
+		$stmt->close();
 		
 			
-	$stmt = $mysql->prepare("INSERT INTO users_interests (user_id, interests_id) VALUES (?,?)");
+		$stmt = $mysql->prepare("INSERT INTO users_interests (user_id, interests_id) VALUES (?,?)");
 	
-	echo $stmt->error;
-	
-	$stmt->bind_param("ii", $_SESSION["user_id"], $interest_id);
-	
-	if($stmt->execute()){
-		echo "save successful";
-	}else{
 		echo $stmt->error;
 	
+		$stmt->bind_param("ii", $_SESSION["user_id"], $interest_id);
 	
+		if($stmt->execute()){
+			echo "save successful";
+		}else{
+			echo $stmt->error;
+	
+	
+			}
 		}
-	}
 
 	function createUserInterestList(){
 	
-	$mysql = new mysqli("localhost", $GLOBALS["db_username"], $GLOBALS["db_password"], "webpr2016_karoliinar");
+		$mysql = new mysqli("localhost", $GLOBALS["db_username"], $GLOBALS["db_password"], "webpr2016_karoliinar");
 	
-	$stmt = $mysql->prepare("SELECT interests.name FROM users_interests INNER JOIN interests ON users_interests_id = interests.id WHERE users_interests.user_id = ?");
+		$stmt = $mysql->prepare("SELECT interests.name FROM users_interests INNER JOIN interests ON users_interests_id = interests.id WHERE users_interests.user_id = ?");
 
-	$stmt->bind_param("i", $_SESSION["user_id"]);
+		$stmt->bind_param("i", $_SESSION["user_id"]);
 	
-	$stmt->execute();
+		$stmt->execute();
 	
-	$html = "<ul>";
+		$html = "<ul>";
 	
-	//for each interest
-	while($stmt->fetch()){
-		$html .="<li>".$interest."</li>";
-	}
+		//for each interest
+		while($stmt->fetch()){
+			$html .="<li>".$interest."</li>";
+		}
 	
 	$html .= "</ul>";
 	
