@@ -83,6 +83,69 @@
 			
 		}
 	}
+	
+	function createInterestDropdown(){
+	
+		//query all interests
+		
+		$mysql = new mysqli("localhost", $GLOBALS["db_username"], $GLOBALS["db_password"], "webpr2016_karoliinar");
+		
+		$stmt = $mysql->prepare("SELECT id, name FROM interests ORDER BY name ASC");	
+		
+		echo $mysql->error; 
+		
+		$stmt->bind_result($id, $name);
+		
+		$stmt->execute();
+		
+		
+		//dropdown html
+		$html ="<select name='user_interest'>";
+		
+		//for each interest
+		while ($stmt->fetch()){
+			$html .= "<option value='".$id."'>".$name."</option>";
+		}
+		
+		$html .= "</select>";		
+		
+		echo $html;
+	}
+	
+	function saveuserInterest($interest_id){
+	
+	$mysql = new mysqli("localhost", $GLOBALS["db_username"], $GLOBALS["db_password"], "webpr2016_karoliinar");
+	
+	//if user already has the interest
+	$stmt = $mysql->prepare("SELECT id FROM users_interests WHERE user_id = ? and interests_id = ?");
+	echo $mysql->error;
+	$stmt->bind_param("ii", $_SESSION["user_id"], $interest_id);
+	$stmt->execute();
+	
+	if($stmt->fetch()){
+		//if existed
+		echo "you already have this interest";
+		return; //stop it there
+		
+	}
+	$stmt->close();
+		
+			
+	$stmt = $mysql->prepare("INSERT INTO users_interests (user_id, interests_id) VALUES (?,?)");
+	
+	echo $stmt->error;
+	
+	$stmt->bind_param("ii", $_SESSION["user_id"], $interest_id);
+	
+	if($stmt->execute()){
+		echo "save successful";
+	}else{
+		echo $stmt->error;
+	
+	
+		}
+	}
+
+
 
 ?>
-
