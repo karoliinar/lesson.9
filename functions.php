@@ -14,13 +14,13 @@
 	
 	$mysql = new mysqli("localhost", $GLOBALS["db_username"], $GLOBALS["db_password"], "webpr2016_karoliinar");
 	
-	$stmt = $mysql->prepare("SELECT id FROM users where username=? and password=?");
+	$stmt = $mysql->prepare("SELECT id, name, name2 FROM users where username=? and password=?");
 	
 	echo $mysql->error; 
 	
 	$stmt->bind_param("ss", $user, $pass);
 	
-	$stmt->bind_result($id);
+	$stmt->bind_result($id, $name, $name2);
 	
 	$stmt->execute();
 	
@@ -31,6 +31,7 @@
 		//create session variables
 	
 		$_SESSION["user_id"] = $id;
+		$_SESSION["name"] = $name;
 		$_SESSION["username"] = $user;
 		
 		header("Location: restrict.php");
@@ -42,7 +43,7 @@
 		}
 	}
 
-	function signup($user, $pass){
+	function signup($user, $pass, $name, $name2){
 		
 		//hash the password
 		$pass = hash("sha512", $pass);
@@ -51,11 +52,11 @@
 		//GLOBALS - access outside variable in function
 		$mysql = new mysqli("localhost", $GLOBALS["db_username"], $GLOBALS["db_password"], "webpr2016_karoliinar");
 		
-		$stmt = $mysql->prepare("INSERT INTO users (username, password) VALUES (?,?) ");
+		$stmt = $mysql->prepare("INSERT INTO users (username, password, name, name2) VALUES (?,?,?,?) ");
 		
 		echo $mysql->error;
 	
-		$stmt->bind_param("ss", $user, $pass);	
+		$stmt->bind_param("ssss", $user, $pass, $name, $name2);	
 		
 		if($stmt->execute()){
 			echo "user saved successfully!";
@@ -65,14 +66,23 @@
 		
 	}
 
-	/*$name= "Karoliina";
-
-	hello($name);
-
-	function hello($recieved_name){
-		echo "hello ".$recieved_name."!";
-	}*/
-
+	function saveInterest($interest){
+	
+		$mysql = new mysqli("localhost", $GLOBALS["db_username"], $GLOBALS["db_password"], "webpr2016_karoliinar");
+		
+		$stmt = $mysql->prepare("INSERT INTO interests (name) VALUE (?)");
+		
+		echo $mysql->error;
+		
+		$stmt->bind_param("s", $interest);
+		
+		if($stmt->execute()){
+			echo"interest saved successfully";
+		}else{
+			echo $stmt->error;
+			
+		}
+	}
 
 ?>
 
