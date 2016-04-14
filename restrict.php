@@ -65,3 +65,12 @@
 	<input type="submit" name="select_interest" value="Select">
 	
 </form>
+
+
+<h1></h1>
+<form>
+
+	<?php createUserInterestList(); ?>
+	<input type="submit" name="select_interest" value="Select">
+	
+</form>

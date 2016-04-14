@@ -146,6 +146,27 @@
 		}
 	}
 
+	function createUserInterestList(){
+	
+	$mysql = new mysqli("localhost", $GLOBALS["db_username"], $GLOBALS["db_password"], "webpr2016_karoliinar");
+	
+	$stmt = $mysql->prepare("SELECT interests.name FROM users_interests INNER JOIN interests ON users_interests_id = interests.id WHERE users_interests.user_id = ?");
 
-
+	$stmt->bind_param("i", $_SESSION["user_id"]);
+	
+	$stmt->execute();
+	
+	$html = "<ul>";
+	
+	//for each interest
+	while($stmt->fetch()){
+		$html .="<li>".$interest."</li>";
+	}
+	
+	$html .= "</ul>";
+	
+	echo $html;
+	
+	}
+		
 ?>
